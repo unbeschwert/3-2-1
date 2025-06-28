@@ -9,7 +9,7 @@ const H2_TAG_TEXT: &str = "1 QUESTION FOR YOU";
 const P_TAG: &str = "p";
 
 fn get_questions(doc: &Html, sel: &Selector) -> Result<Option<String>> {
-    for h2_element in doc.select(&sel) {
+    for h2_element in doc.select(sel) {
         if h2_element.text().collect::<String>() == H2_TAG_TEXT {
             let mut p_element = h2_element
                 .next_sibling_element()
@@ -35,6 +35,7 @@ fn get_questions(doc: &Html, sel: &Selector) -> Result<Option<String>> {
     Ok(None)
 }
 
+
 fn fetch_html_doc(url: &str) -> Result<String> {
     let text = reqwest::blocking::get(url)
         .with_context(|| format!("Failed to send http request: {url:?}"))?
@@ -51,7 +52,7 @@ fn main() -> Result<()> {
         .join("questions");
     let mut file_obj = fs::File::create(&file_name)
         .with_context(|| format!("Couldn't create file {file_name:?}"))?;
-    let main_page = fetch_html_doc(&URL)?;
+    let main_page = fetch_html_doc(URL)?;
     let main_html = Html::parse_document(&main_page);
     let a_selector = Selector::parse(r#"a[class="all-articles__news__post"]"#).unwrap();
 
